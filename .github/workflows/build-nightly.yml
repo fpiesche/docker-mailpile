@@ -28,7 +28,7 @@ jobs:
 
       - name: Get current commit on woodpecker submodule
         run: |
-          echo MAILPILE_COMMIT=$(git rev-parse --short @:./Mailpile) >> $GITHUB_ENV
+          echo MAILPILE_COMMIT=$(git rev-parse --short @:./mailpile) >> $GITHUB_ENV
 
       - name: Docker Setup QEMU
         uses: docker/setup-qemu-action@v1.0.1

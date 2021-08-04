@@ -28,7 +28,7 @@ jobs:
 
       - name: Get latest Mailpile tag
         run: |
-          cd Mailpile
+          cd mailpile
           git fetch --tags
           LATEST_TAG_REV=$(git rev-list --tags --max-count 1)
           MAILPILE_VERSION=$(git describe --tags ${LATEST_TAG_REV})
