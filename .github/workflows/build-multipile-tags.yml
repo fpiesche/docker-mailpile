@@ -39,7 +39,7 @@ jobs:
         run: |
           echo "BUILD_RELEASE=true" >> $GITHUB_ENV
           # Check whether there already is a Docker image for the current tag
-          SERVER_TAGS=$(curl -s https://registry.hub.docker.com/v1/repositories/florianpiesche/mailpile-multiuser/tags | jq -r ".[].name")
+          SERVER_TAGS=$(curl -s https://registry.hub.docker.com/v1/repositories/florianpiesche/mailpile-multiuser/tags | jq -r ".[].name") || SERVER_TAGS="none"
           for tag in ${SERVER_TAGS[@]}; do
             if [[ "$tag" == "${MAILPILE_VERSION}" ]]; then
               echo "Release ${tag} has already been built."
