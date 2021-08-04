@@ -1,4 +1,4 @@
-name: Release (Multi-user)
+name: Release (multi-user)
 
 on:
   # Allow manual runs.

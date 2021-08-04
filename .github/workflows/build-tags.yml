@@ -1,4 +1,4 @@
-name: Release
+name: Release (single-user)
 
 on:
   # Allow manual runs.

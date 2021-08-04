@@ -1,4 +1,4 @@
-name: Nightly
+name: Nightly (single-user)
 
 on:
   # Allow manual runs.
