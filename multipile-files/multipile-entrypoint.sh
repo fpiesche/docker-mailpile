@@ -27,7 +27,7 @@ if [ ! -z "$MAILPILE_USERS" ]; then
             log "User $username already set up for Mailpile."
         else
             log "Adding user $username..."
-            useradd -g mailpile -m $username
+            useradd -g mailpile -m "$username" -s /bin/false
             log "Setting up Mailpile for $username..."
             /usr/share/mailpile/multipile/mailpile-admin.py --user $username --start
         fi
