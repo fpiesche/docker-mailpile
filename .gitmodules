@@ -1,0 +1,3 @@
+[submodule "Mailpile"]
+	path = Mailpile
+	url = git@github.com:mailpile/Mailpile.git
