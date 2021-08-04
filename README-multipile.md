@@ -12,6 +12,10 @@
 
 # Quick reference
 
+-   **Image Repositories**:  
+    - Docker Hub (multi-user): [`florianpiesche/mailpile-multiuser`](https://hub.docker.com/r/florianpiesche/mailpile-multiuser)  
+    - GitHub Packages (multi-user): [`ghcr.io/fpiesche/mailpile-multiuser`](https://ghcr.io/fpiesche/mailpile-multiuser)
+
 -   **Maintained by**:  
 	[Florian Piesche](https://github.com/fpiesche) (Docker images)  
     [Mailpile Team](https://github.com/mailpile) (Mailpile application)
