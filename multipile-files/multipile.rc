@@ -1,0 +1,5 @@
+[Multipile]
+idlequit = 900
+webroot = /mailpile
+apache_user = www-data
+apache_group = root

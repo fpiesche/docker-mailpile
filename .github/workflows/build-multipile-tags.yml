@@ -1,0 +1,97 @@
+name: Release (Multi-user)
+
+on:
+  # Allow manual runs.
+  workflow_dispatch:
+  # Also run on updates to this repo.
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '**/*.md'
+  pull_request:
+    paths-ignore:
+      - '**/*.md'
+
+env:
+  PLATFORMS: linux/arm/v6,linux/arm/v7,linux/arm64/v8,linux/amd64
+
+jobs:
+
+  build-image:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: 'true'
+
+      - name: Get latest Mailpile tag
+        run: |
+          cd mailpile
+          git fetch --tags
+          LATEST_TAG_REV=$(git rev-list --tags --max-count 1)
+          MAILPILE_VERSION=$(git describe --tags ${LATEST_TAG_REV})
+          echo "MAILPILE_VERSION=${MAILPILE_VERSION}" >> $GITHUB_ENV
+          git checkout ${MAILPILE_VERSION}
+
+      - name: Check whether latest release needs building
+        run: |
+          echo "BUILD_RELEASE=true" >> $GITHUB_ENV
+          # Check whether there already is a Docker image for the current tag
+          SERVER_TAGS=$(curl -s https://registry.hub.docker.com/v1/repositories/florianpiesche/mailpile-multiuser/tags | jq -r ".[].name")
+          for tag in ${SERVER_TAGS[@]}; do
+            if [[ "$tag" == "${MAILPILE_VERSION}" ]]; then
+              echo "Release ${tag} has already been built."
+              echo "BUILD_RELEASE=false" >> $GITHUB_ENV
+              break
+            fi
+          done
+
+      - name: Docker Setup QEMU
+        if: env.BUILD_RELEASE == 'true'
+        uses: docker/setup-qemu-action@v1.0.1
+
+      - name: Docker Setup Buildx
+        if: env.BUILD_RELEASE == 'true'
+        uses: docker/setup-buildx-action@v1.0.3
+
+      - name: Login to DockerHub
+        if: env.BUILD_RELEASE == 'true'
+        uses: docker/login-action@v1 
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Login to GitHub Container Registry
+        if: env.BUILD_RELEASE == 'true'
+        uses: docker/login-action@v1 
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GHCR_TOKEN }}
+
+      - name: Build mailpile multi-user Docker image
+        if: (github.ref != 'refs/heads/main' && env.BUILD_RELEASE == 'true')
+        uses: docker/build-push-action@v2.1.0
+        with:
+          build-args: MAILPILE_VERSION=release
+          tags: |
+            florianpiesche/mailpile-multiuser:latest
+            ghcr.io/${{ github.repository_owner }}/mailpile-multiuser:latest
+          platforms: ${{ env.PLATFORMS }}
+          push: false
+
+      - name: Build and push mailpile multi-user Docker image
+        if: (github.ref == 'refs/heads/main' && env.BUILD_RELEASE == 'true')
+        uses: docker/build-push-action@v2.1.0
+        with:
+          file: Dockerfile.multipile
+          build-args: MAILPILE_VERSION=release
+          tags: |
+            florianpiesche/mailpile-multiuser:latest
+            florianpiesche/mailpile-multiuser:${{ env.MAILPILE_VERSION }}
+            ghcr.io/${{ github.repository_owner }}/mailpile-multiuser:latest
+            ghcr.io/${{ github.repository_owner }}/mailpile-multiuser:${{ env.MAILPILE_VERSION }}
+          platforms: ${{ env.PLATFORMS }}
+          push: true
