@@ -2,13 +2,15 @@ FROM debian:buster-slim
 
 ARG GID=1000
 ARG UID=1000
+ARG MAILPILE_VERSION=nightly
 ARG DEBIAN_FRONTEND=noninteractive
 
 ENV MAILPILE_GNUPG_AGENT="/usr/bin/gpg-agent" \
     MAILPILE_GNUPG_DIRMNGR="/usr/bin/dirmngr" \
     MAILPILE_TOR="/usr/sbin/tor" \
     MAILPILE_OPENSSL="/usr/bin/openssl" \
-    MAILPILE_GNUPG="/usr/bin/gpg1"
+    MAILPILE_GNUPG="/usr/bin/gpg1" \
+    MAILPILE_VERSION=${MAILPILE_VERSION}
 
 RUN apt-get update && \
     # Install basic requirements
@@ -17,7 +19,7 @@ RUN apt-get update && \
     # buster-slim image doesn't seem to have CA certificates available that'll accept the
     # mailpile repo cert.
     wget --no-check-certificate -q https://packages.mailpile.is/deb/key.asc -O- | apt-key add - && \
-    echo "deb https://packages.mailpile.is/deb nightly main" | tee /etc/apt/sources.list.d/000-mailpile.list && \
+    echo "deb https://packages.mailpile.is/deb ${MAILPILE_VERSION} main" | tee /etc/apt/sources.list.d/000-mailpile.list && \
     # Add user for mailpile
     groupadd -g $GID mailpile && useradd -u $UID -g $GID -m mailpile && \
     # Install mailpile
