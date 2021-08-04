@@ -1,4 +1,4 @@
-name: Build Docker image from mailpile nightly
+name: Nightly
 
 on:
   # Allow manual runs.
