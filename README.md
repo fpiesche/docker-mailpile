@@ -1,12 +1,9 @@
 # Multi-architecture Docker builds for Mailpile
 
-<img align="left" style="margin-right:1em" src="https://raw.githubusercontent.com/mailpile/Mailpile/master/shared-data/mailpile-gui/media/logo-color.png" />
+<img align="right" style="margin-left:1em" src="https://raw.githubusercontent.com/mailpile/Mailpile/master/shared-data/mailpile-gui/media/logo-color.png" />
 
-![Release (single-user)](https://github.com/fpiesche/docker-mailpile/actions/workflows/build-tags.yml/badge.svg)
-![Release (multi-user)](https://github.com/fpiesche/docker-mailpile/actions/workflows/build-multipile-tags.yml/badge.svg)
-
-![Nightly (single-user)](https://github.com/fpiesche/docker-mailpile/actions/workflows/build-nightly.yml/badge.svg)
-![Nightly (multi-user)](https://github.com/fpiesche/docker-mailpile/actions/workflows/build-multipile-nightly.yml/badge.svg)
+![Release](https://github.com/fpiesche/docker-mailpile/actions/workflows/release.yml/badge.svg)
+![Nightly](https://github.com/fpiesche/docker-mailpile/actions/workflows/nightly.yml/badge.svg)
 
 [Mailpile](https://mailpile.is/) is a self-hosted, modern web email client with good encryption support.
 
