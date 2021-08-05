@@ -85,9 +85,9 @@ jobs:
           file: Dockerfile.${{ matrix.variant }}
           build-args: MAILPILE_VERSION=nightly
           tags: |
-            florianpiesche/.${{ matrix.variant }}:nightly
-            florianpiesche/.${{ matrix.variant }}:${{ env.MAILPILE_COMMIT }}
-            ghcr.io/${{ github.repository_owner }}/.${{ matrix.variant }}:nightly
-            ghcr.io/${{ github.repository_owner }}/.${{ matrix.variant }}:${{ env.MAILPILE_COMMIT }}
+            florianpiesche/${{ matrix.variant }}:nightly
+            florianpiesche/${{ matrix.variant }}:${{ env.MAILPILE_COMMIT }}
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.variant }}:nightly
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.variant }}:${{ env.MAILPILE_COMMIT }}
           platforms: ${{ env.PLATFORMS }}
           push: true
