@@ -54,11 +54,6 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           build-args: MAILPILE_VERSION=nightly
-          tags: |
-            florianpiesche/mailpile-multiuser:nightly
-            florianpiesche/mailpile-multiuser:${{ env.MAILPILE_COMMIT }}
-            ghcr.io/${{ github.repository_owner }}/mailpile-multiuser:nightly
-            ghcr.io/${{ github.repository_owner }}/mailpile-multiuser:${{ env.MAILPILE_COMMIT }}
           platforms: ${{ env.PLATFORMS }}
           push: false
 

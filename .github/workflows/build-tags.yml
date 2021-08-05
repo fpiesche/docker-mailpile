@@ -76,9 +76,6 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           build-args: MAILPILE_VERSION=release
-          tags: |
-            florianpiesche/mailpile:latest
-            ghcr.io/${{ github.repository_owner }}/mailpile:latest
           platforms: ${{ env.PLATFORMS }}
           push: false
 
