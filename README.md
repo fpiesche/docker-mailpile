@@ -19,7 +19,7 @@
 	[Florian Piesche](https://github.com/fpiesche) (Docker images)  
     [Mailpile Team](https://github.com/mailpile) (Mailpile application)
 
--	**Where to file issues**:  
+-   **Where to file issues**:  
     [https://github.com/fpiesche/docker-mailpile/issues](https://github.com/fpiesche/docker-mailpile/issues) (Docker images)  
     [https://github.com/mailpile/Mailpile/issues](https://github.com/mailpile/Mailpile/issues) (Mailpile application)
 
@@ -52,7 +52,7 @@
 This image will run Mailpile in web mode and automatically start the web UI. To run the image:
 
 ```console
-$ docker run -d -p 8080:80 florianpiesche/mailpile
+$ docker run -d -p 8080:33411 florianpiesche/mailpile
 ```
 
 Once startup completes, you will be able to use Mailpile at `http://localhost:8080/` on your host computer.
@@ -63,12 +63,12 @@ The mailpile data (emails, encryption keys, configuration, etc) are all stored i
 
 A named Docker volume or a mounted host directory can be used for upgrades and backups. You can add this by using the `-v` parameter when running Docker:
 
-	```console
-	$ docker run -d \
-	-v mailpile:/home/mailpile/.local/share/Mailpile \
-    -p 8080:80 \
-	florianpiesche/mailpile
-	```
+```console
+$ docker run -d \
+  -v mailpile:/home/mailpile/.local/share/Mailpile \
+  -p 8080:33411 \
+  florianpiesche/mailpile
+```
 
 ## Using docker-compose
 
@@ -89,7 +89,7 @@ services:
     volumes:
       - mailpile:/home/mailpile/.local/share/Mailpile
     ports:
-      - 8080:80
+      - 8080:33411
 ```
 
 Then run `docker-compose up -d` in the directory holding the compose file, and you will be able to access Mailpile at http://localhost:8080/ from your host system. You can stop Mailpile at any point using `docker-compose down`, and resume it again with your data stored by re-running `docker-compose up -d`.
