@@ -62,8 +62,8 @@ jobs:
           file: Dockerfile.${{ matrix.variant }}
           build-args: MAILPILE_VERSION=nightly
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.variant }}:nightly
-            ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.variant }}:${{ env.MAILPILE_COMMIT }}
+            ${{ secrets.DOCKERHUB_USERNAME || 'nobody' }}/${{ matrix.variant }}:nightly
+            ${{ secrets.DOCKERHUB_USERNAME || 'nobody' }}/${{ matrix.variant }}:${{ env.MAILPILE_COMMIT }}
             ghcr.io/${{ github.repository_owner }}/${{ matrix.variant }}:nightly
             ghcr.io/${{ github.repository_owner }}/${{ matrix.variant }}:${{ env.MAILPILE_COMMIT }}
           platforms: ${{ env.PLATFORMS }}
