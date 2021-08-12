@@ -42,6 +42,7 @@ jobs:
           git checkout ${MAILPILE_VERSION}
 
       - name: Check whether latest release needs building
+        if: ${{ env.PUSH_IMAGE == 'true' }}
         run: |
           # Check whether there already is a Docker image for the current tag
           SERVER_TAGS=$(curl -s https://registry.hub.docker.com/v1/repositories/${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.variant }}/tags | jq -r ".[].name") || SERVER_TAGS="none"
@@ -49,7 +50,7 @@ jobs:
             if [[ "$tag" == "${MAILPILE_VERSION}" ]]; then
               echo "Release ${tag} has already been built."
               echo "BUILD_RELEASE=false" >> $GITHUB_ENV
-              break
+              exit
             fi
           done
 
@@ -77,6 +78,7 @@ jobs:
           password: ${{ secrets.GHCR_TOKEN }}
 
       - name: Build and push ${{ matrix.variant }} Docker image
+        if: ${{ env.BUILD_RELEASE == 'true' }}
         uses: docker/build-push-action@v2
         with:
           file: Dockerfile.${{ matrix.variant }}
