@@ -55,6 +55,7 @@ jobs:
       - name: Get current commit on mailpile submodule
         run: |
           echo MAILPILE_COMMIT=$(git rev-parse --short @:./mailpile) >> $GITHUB_ENV
+          echo DATESTAMP=$(date +%Y.%m.%d) >> $GITHUB_ENV
 
       - name: Build and push ${{ matrix.variant }} Docker image
         uses: docker/build-push-action@v2
@@ -63,8 +64,10 @@ jobs:
           build-args: MAILPILE_VERSION=nightly
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME || 'nobody' }}/${{ matrix.variant }}:nightly
+            ${{ secrets.DOCKERHUB_USERNAME || 'nobody' }}/${{ matrix.variant }}:nightly-${{ env.DATESTAMP }}
             ${{ secrets.DOCKERHUB_USERNAME || 'nobody' }}/${{ matrix.variant }}:${{ env.MAILPILE_COMMIT }}
             ghcr.io/${{ github.repository_owner }}/${{ matrix.variant }}:nightly
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.variant }}:nightly-${{ env.DATESTAMP }}
             ghcr.io/${{ github.repository_owner }}/${{ matrix.variant }}:${{ env.MAILPILE_COMMIT }}
           platforms: ${{ env.PLATFORMS }}
           push: ${{ env.PUSH_IMAGE }}
