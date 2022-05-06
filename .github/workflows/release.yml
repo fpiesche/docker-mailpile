@@ -56,7 +56,7 @@ jobs:
 
       - name: Docker Setup QEMU
         if: ${{ env.BUILD_RELEASE == 'true' }}
-        uses: docker/setup-qemu-action@v1
+        uses: docker/setup-qemu-action@v2
 
       - name: Docker Setup Buildx
         if: ${{ env.BUILD_RELEASE == 'true' }}
