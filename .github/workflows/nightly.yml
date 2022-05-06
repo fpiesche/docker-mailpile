@@ -58,7 +58,7 @@ jobs:
           echo DATESTAMP=$(date +%Y.%m.%d) >> $GITHUB_ENV
 
       - name: Build and push ${{ matrix.variant }} Docker image
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           file: Dockerfile.${{ matrix.variant }}
           build-args: MAILPILE_VERSION=nightly
