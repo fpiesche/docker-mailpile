@@ -60,7 +60,7 @@ jobs:
 
       - name: Docker Setup Buildx
         if: ${{ env.BUILD_RELEASE == 'true' }}
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v2
 
       - name: Login to DockerHub
         if: ${{ env.PUSH_IMAGE == 'true' }}
