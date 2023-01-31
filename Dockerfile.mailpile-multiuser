@@ -1,4 +1,4 @@
-FROM debian:buster-slim
+FROM debian:11.6
 
 ARG GID=1000
 ARG MAILPILE_VERSION=nightly
