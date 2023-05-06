@@ -15,11 +15,10 @@ ENV MAILPILE_GNUPG_AGENT="/usr/bin/gpg-agent" \
 RUN apt-get update && \
     # Install basic requirements
     apt-get install -y curl wget apt-transport-https gnupg1 ca-certificates && \
-    # Add mailpile repo - we have to use wget --no-check-certificate here as the debian
-    # buster-slim image doesn't seem to have CA certificates available that'll accept the
-    # mailpile repo cert.
-    wget --no-check-certificate -q https://packages.mailpile.is/deb/key.asc -O- | apt-key add - && \
-    echo "deb https://packages.mailpile.is/deb ${MAILPILE_VERSION} main" | tee /etc/apt/sources.list.d/000-mailpile.list && \
+    # Add mailpile repo
+    sudo mkdir -p /etc/apt/keyrings/ && \
+    wget -O- https://packages.mailpile.is/deb/key.asc | gpg --dearmor | tee /etc/apt/keyrings/mailpile.gpg > /dev/null \
+    echo "deb [signed-by=/etc/apt/keyrings/mailpile.gpg] https://packages.mailpile.is/deb ${MAILPILE_VERSION} main" | tee /etc/apt/sources.list.d/000-mailpile.list && \
     # Add user for mailpile
     groupadd -g $GID mailpile && useradd -u $UID -g $GID -m mailpile && \
     # Install mailpile
