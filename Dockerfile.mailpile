@@ -17,7 +17,7 @@ RUN apt-get update && \
     apt-get install -y curl wget apt-transport-https gnupg1 ca-certificates && \
     # Add mailpile repo
     mkdir -p /etc/apt/keyrings/ && \
-    wget -O- https://packages.mailpile.is/deb/key.asc | gpg --dearmor | tee /etc/apt/keyrings/mailpile.gpg > /dev/null \
+    wget -O- https://packages.mailpile.is/deb/key.asc | gpg1 --dearmor | tee /etc/apt/keyrings/mailpile.gpg > /dev/null \
     echo "deb [signed-by=/etc/apt/keyrings/mailpile.gpg] https://packages.mailpile.is/deb ${MAILPILE_VERSION} main" | tee /etc/apt/sources.list.d/000-mailpile.list && \
     # Add user for mailpile
     groupadd -g $GID mailpile && useradd -u $UID -g $GID -m mailpile && \
