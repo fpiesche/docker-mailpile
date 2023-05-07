@@ -14,7 +14,7 @@ on:
       - '**/*.md'
 
 env:
-  PLATFORMS: linux/arm/v6,linux/arm/v7,linux/arm64/v8,linux/amd64
+  PLATFORMS: linux/arm/v7,linux/arm64/v8,linux/amd64
   PUSH_IMAGE: ${{ github.ref == 'refs/heads/main' }}
 
 jobs:
@@ -60,7 +60,8 @@ jobs:
       - name: Build and push ${{ matrix.variant }} Docker image
         uses: docker/build-push-action@v4
         with:
-          file: Dockerfile.${{ matrix.variant }}
+          file: Dockerfile
+          target: ${{ matrix.variant }}
           build-args: MAILPILE_VERSION=nightly
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME || 'nobody' }}/${{ matrix.variant }}:nightly

@@ -23,13 +23,16 @@ fi
 
 if [ ! -z "$MAILPILE_USERS" ]; then
     for username in $MAILPILE_USERS; do
-        if [ -d /home/${username}/.local/share/Mailpile ]; then
-            log "User $username already set up for Mailpile."
-        else
+        if [ ! -d /home/${username} ]; then
             log "Adding user $username..."
             useradd -g mailpile -m "$username" -s /bin/false
+        fi
+        if [ ! -d /home/${username}/.local/share/Mailpile ]; then
             log "Setting up Mailpile for $username..."
+            su - $username -c 'mailpile setup'
             /usr/share/mailpile/multipile/mailpile-admin.py --user $username --start
+        else
+            log "User $username already set up for Mailpile."
         fi
     done
 fi
