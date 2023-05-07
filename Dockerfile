@@ -1,4 +1,4 @@
-FROM debian:buster-slim AS mailpile
+FROM debian:buster-slim AS base
 
 ARG GID=1000
 ARG UID=1000
@@ -19,16 +19,22 @@ RUN apt-get update && \
     mkdir -p /etc/apt/keyrings/ && \
     wget -O- https://packages.mailpile.is/deb/key.asc | gpg1 --dearmor | tee /etc/apt/keyrings/mailpile.gpg > /dev/null && \
     echo "deb [signed-by=/etc/apt/keyrings/mailpile.gpg] https://packages.mailpile.is/deb ${MAILPILE_VERSION} main" | tee /etc/apt/sources.list.d/000-mailpile.list && \
-    # Add user for mailpile
-    groupadd -g $GID mailpile && useradd -u $UID -g $GID -m mailpile && \
     # Install mailpile
     apt-get update && apt-get install -y mailpile && \
     # Start tor
     update-rc.d tor defaults && \
-    # Set up mailpile
-    su - mailpile -c 'mailpile setup' && \
     # Tidy up apt
     apt-get clean
+
+#
+#  regular target: Single-user Mailpile image
+#
+
+FROM base as mailpile
+
+# Create mailpile user and set up
+RUN groupadd -g $GID mailpile && useradd -u $UID -g $GID -m mailpile && \
+    su - mailpile -c 'mailpile setup'
 
 # Expose port and set up a volume for data persistence
 EXPOSE 33411
@@ -43,11 +49,10 @@ CMD mailpile --www=0.0.0.0:33411 --wait
 #  alternate target: multi-user Mailpile image
 #
 
-FROM mailpile AS mailpile-multiuser
+FROM base AS mailpile-multiuser
 
-USER root
-RUN apt-get update && apt-get install -y mailpile-apache2 && \
-    userdel -rf mailpile && \
+RUN groupadd -g $GID mailpile && \
+    apt-get update && apt-get install -y mailpile mailpile-apache2 && \
     apt-get clean
 
 # Expose port, copy entrypoint and set up a volume for data persistence
