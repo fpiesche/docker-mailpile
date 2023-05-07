@@ -56,7 +56,7 @@ RUN groupadd -g $GID mailpile && \
     apt-get clean
 
 # Expose port, copy entrypoint and set up a volume for data persistence
-ENV MAILPILE_USERS=""
+ENV MAILPILE_USERS="mailpile"
 EXPOSE 80
 COPY multipile-files/multipile-entrypoint.sh /usr/share/mailpile/multipile/multipile-entrypoint.sh
 COPY multipile-files/multipile.rc /etc/mailpile/multipile.rc
