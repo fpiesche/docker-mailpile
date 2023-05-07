@@ -43,7 +43,7 @@ CMD mailpile --www=0.0.0.0:33411 --wait
 #  alternate target: multi-user Mailpile image
 #
 
-FROM singleuser AS mailpile-multiuser
+FROM mailpile AS mailpile-multiuser
 
 RUN apt-get update && apt-get install -y mailpile-apache2 && \
     userdel -rf mailpile && \
