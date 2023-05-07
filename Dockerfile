@@ -45,6 +45,7 @@ CMD mailpile --www=0.0.0.0:33411 --wait
 
 FROM mailpile AS mailpile-multiuser
 
+USER root
 RUN apt-get update && apt-get install -y mailpile-apache2 && \
     userdel -rf mailpile && \
     apt-get clean
