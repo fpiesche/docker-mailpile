@@ -14,17 +14,13 @@ on:
       - '**/*.md'
 
 env:
-  PLATFORMS: linux/arm/v6,linux/arm/v7,linux/arm64/v8,linux/amd64
+  PLATFORMS: linux/arm/v7,linux/arm64/v8,linux/amd64
   PUSH_IMAGE: ${{ github.ref == 'refs/heads/main' }}
 
 jobs:
 
   build-and-push:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        variant: [ "mailpile", "mailpile-multiuser" ]
 
     steps:
       - uses: actions/checkout@v3
@@ -57,17 +53,18 @@ jobs:
           echo MAILPILE_COMMIT=$(git rev-parse --short @:./mailpile) >> $GITHUB_ENV
           echo DATESTAMP=$(date +%Y.%m.%d) >> $GITHUB_ENV
 
-      - name: Build and push ${{ matrix.variant }} Docker image
+      - name: Build and push Mailpile Docker image
         uses: docker/build-push-action@v4
         with:
-          file: Dockerfile.${{ matrix.variant }}
+          file: Dockerfile
+          target: mailpile
           build-args: MAILPILE_VERSION=nightly
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME || 'nobody' }}/${{ matrix.variant }}:nightly
-            ${{ secrets.DOCKERHUB_USERNAME || 'nobody' }}/${{ matrix.variant }}:nightly-${{ env.DATESTAMP }}
-            ${{ secrets.DOCKERHUB_USERNAME || 'nobody' }}/${{ matrix.variant }}:${{ env.MAILPILE_COMMIT }}
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.variant }}:nightly
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.variant }}:nightly-${{ env.DATESTAMP }}
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.variant }}:${{ env.MAILPILE_COMMIT }}
+            ${{ secrets.DOCKERHUB_USERNAME || 'nobody' }}/mailpile:nightly
+            ${{ secrets.DOCKERHUB_USERNAME || 'nobody' }}/mailpile:nightly-${{ env.DATESTAMP }}
+            ${{ secrets.DOCKERHUB_USERNAME || 'nobody' }}/mailpile:${{ env.MAILPILE_COMMIT }}
+            ghcr.io/${{ github.repository_owner }}/mailpile:nightly
+            ghcr.io/${{ github.repository_owner }}/mailpile:nightly-${{ env.DATESTAMP }}
+            ghcr.io/${{ github.repository_owner }}/mailpile:${{ env.MAILPILE_COMMIT }}
           platforms: ${{ env.PLATFORMS }}
           push: ${{ env.PUSH_IMAGE }}
