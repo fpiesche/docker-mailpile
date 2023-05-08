@@ -12,11 +12,9 @@
 -   **Image Repositories**:
     - Docker Hub: [`florianpiesche/mailpile`](https://hub.docker.com/r/florianpiesche/mailpile)  
     - GitHub Packages: [`ghcr.io/fpiesche/mailpile`](https://ghcr.io/fpiesche/mailpile)  
-    - Docker Hub (multi-user): [`florianpiesche/mailpile-multiuser`](https://hub.docker.com/r/florianpiesche/mailpile-multiuser)  
-    - GitHub Packages (multi-user): [`ghcr.io/fpiesche/mailpile-multiuser`](https://ghcr.io/fpiesche/mailpile-multiuser)
 
 -   **Maintained by**:  
-	[Florian Piesche](https://github.com/fpiesche) (Docker images)  
+  	[Florian Piesche](https://github.com/fpiesche) (Docker images)  
     [Mailpile Team](https://github.com/mailpile) (Mailpile application)
 
 -   **Where to file issues**:  
@@ -96,75 +94,4 @@ Then run `docker-compose up -d` in the directory holding the compose file, and y
 
 # Multi-user mode
 
-The alternate `mailpile-multiuser` image will run Mailpile in multiple-user mode. The entrypoint will create users as requested and automatically start the web UI. To run the image and set up three users, `alex`, `bailey` and `chris`:
-
-```console
-$ docker run -d \
-  -e MAILPILE_USERS="alex bailey chris" \
-  -p 8080:80 \
-  florianpiesche/mailpile-multiuser
-```
-
-Once startup completes, you will be able to use Mailpile at `http://localhost:8080/mailpile/` on your host computer and log in with your chosen user name.
-
-## Configuration
-
-The multi-user image is cofigured using a single environment variable, `MAILPILE_USERS`, which is a space-separated list of users to create in the container and set up as Mailpile users.
-
-## Persistent data
-
-As with the regular image, Mailpile data is stored in an [unnamed docker volume](https://docs.docker.com/engine/tutorials/dockervolumes/#adding-a-data-volume) `/home/`; this volume will hold the data for **all** users.
-
-Also as with the single-user image, a named Docker volume or a mounted host directory can be used for upgrades and backups. You can add this by using the `-v` parameter when running Docker:
-
-```console
-$ docker run -d \
-  -v mailpile:/home \
-  -e MAILPILE_USERS="alex bailey chris" \
-  -p 8080:80 \
-  florianpiesche/mailpile-multiuser
-```
-
-## Security concerns
-
-Note that the data for all users is stored in the same volume. As long as all the users are trusted, there shouldn't be any major security issues arising from this beyond using mailpile in multi-user mode otherwise, as each user's data is fully one-way encrypted with their password and there is no shell login for any of the users.
-
-However, there is of course a risk as if the host machine were compromised and the Docker volume exfiltrated, the intruder would have all your users' data in a single location. Additionally, if a user wanted to take their data away from your server and use it e.g. on their local machine, this is a bit more complex if their data is on a single volume with everyone else's.
-
-You can mitigate this by creating individual volumes for each user's Mailpile data directory only:
-
-```console
-$ docker run -d \
-  -e MAILPILE_USERS="alex bailey chris" \
-  -v mailpile-alex:/home/alex/.local/share/Mailpile \
-  -v mailpile-bailey:/home/bailey/.local/share/Mailpile \
-  -v mailpile-chris:/home/chris/.local/share/Mailpile \
-  -p 8080:80 \
-  florianpiesche/mailpile-multiuser
-```
-
-## docker-compose in multi-user mode
-
-As adding a separate volume to the Docker command line for every single user starts ballooning your command very quickly, it is *highly* recommended to use `docker-compose` for multi-user mode. As for single-user mode, simply create a file called `docker-compose.yml` in an empty directory on your host machine, paste in the following data, edit it to suit your needs and use `docker-compose up -d` to run the container.
-
-```yaml
-version: '2'
-
-volumes:
-  mailpile-alex:
-  mailpile-bailey:
-  mailpile-chris:
-
-services:
-  mailpile:
-    image: florianpiesche/mailpile-multiuser
-    restart: always
-    volumes:
-      - mailpile-alex:/home/alex/.local/share/Mailpile
-      - mailpile-bailey:/home/bailey/.local/share/Mailpile
-      - mailpile-chris:/home/alex/.local/share/Mailpile
-    ports:
-      - 8080:80
-    env:
-      MAILPILE_USERS: "alex bailey chris"
-```
+I've stopped maintaining the multi-user images. They were never working well in the first place, and getting Mailpile's multi-user setup working in a container without an additional reverse proxy in front of the main server was beyond my ability to sort out. Due to the inherent security concerns (multiple users in the same container meaning all users' data was exposed inside a single container) however, I would recommend using separate single-user containers anyway.

@@ -1,16 +1,13 @@
 FROM debian:buster-slim AS base
-
-ARG GID=1000
-ARG UID=1000
 ARG MAILPILE_VERSION=nightly
-ARG DEBIAN_FRONTEND=noninteractive
 
 ENV MAILPILE_GNUPG_AGENT="/usr/bin/gpg-agent" \
     MAILPILE_GNUPG_DIRMNGR="/usr/bin/dirmngr" \
     MAILPILE_TOR="/usr/sbin/tor" \
     MAILPILE_OPENSSL="/usr/bin/openssl" \
     MAILPILE_GNUPG="/usr/bin/gpg1" \
-    MAILPILE_VERSION=${MAILPILE_VERSION}
+    MAILPILE_VERSION=${MAILPILE_VERSION} \
+    DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && \
     # Install basic requirements
@@ -33,7 +30,7 @@ RUN apt-get update && \
 FROM base as mailpile
 
 # Create mailpile user and set up
-RUN groupadd -g $GID mailpile && useradd -u $UID -g $GID -m mailpile && \
+RUN groupadd -g 1000 mailpile && useradd -u 1000 -g 1000 -m mailpile && \
     su - mailpile -c 'mailpile setup'
 
 # Expose port and set up a volume for data persistence
@@ -44,23 +41,3 @@ VOLUME /home/mailpile/.local/share/Mailpile
 USER mailpile
 WORKDIR /home/mailpile
 CMD mailpile --www=0.0.0.0:33411 --wait
-
-#
-#  alternate target: multi-user Mailpile image
-#
-
-FROM base AS mailpile-multiuser
-
-RUN groupadd -g $GID mailpile && \
-    apt-get update && apt-get install -y mailpile mailpile-apache2 && \
-    apt-get clean
-
-# Expose port, copy entrypoint and set up a volume for data persistence
-ENV MAILPILE_USERS="mailpile"
-EXPOSE 80
-COPY multipile-files/multipile-entrypoint.sh /usr/share/mailpile/multipile/multipile-entrypoint.sh
-COPY multipile-files/multipile.rc /etc/mailpile/multipile.rc
-VOLUME /home/
-
-# Run mailpile entrypoint
-CMD [ "/bin/bash", "/usr/share/mailpile/multipile/multipile-entrypoint.sh" ]

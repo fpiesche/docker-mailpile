@@ -23,10 +23,6 @@ jobs:
   build-images:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        variant: [ "mailpile", "mailpile-multiuser" ]
-
     steps:
       - uses: actions/checkout@v3
         with:
@@ -45,7 +41,7 @@ jobs:
         if: ${{ env.PUSH_IMAGE == 'true' }}
         run: |
           # Check whether there already is a Docker image for the current tag
-          SERVER_TAGS=$(curl -s https://registry.hub.docker.com/v1/repositories/${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.variant }}/tags | jq -r ".[].name") || SERVER_TAGS="none"
+          SERVER_TAGS=$(curl -s https://registry.hub.docker.com/v1/repositories/${{ secrets.DOCKERHUB_USERNAME }}/mailpile/tags | jq -r ".[].name") || SERVER_TAGS="none"
           for tag in ${SERVER_TAGS[@]}; do
             if [[ "$tag" == "${MAILPILE_VERSION}" ]]; then
               echo "Release ${tag} has already been built."
@@ -77,16 +73,16 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GHCR_TOKEN }}
 
-      - name: Build and push ${{ matrix.variant }} Docker image
+      - name: Build and push Mailpile Docker image
         if: ${{ env.BUILD_RELEASE == 'true' }}
         uses: docker/build-push-action@v4
         with:
           build-args: MAILPILE_VERSION=release
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME || 'nobody' }}/${{ matrix.variant }}:latest
-            ${{ secrets.DOCKERHUB_USERNAME || 'nobody' }}/${{ matrix.variant }}:${{ env.MAILPILE_VERSION }}
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.variant }}:latest
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.variant }}:${{ env.MAILPILE_VERSION }}
+            ${{ secrets.DOCKERHUB_USERNAME || 'nobody' }}/mailpile:latest
+            ${{ secrets.DOCKERHUB_USERNAME || 'nobody' }}/mailpile:${{ env.MAILPILE_VERSION }}
+            ghcr.io/${{ github.repository_owner }}/mailpile:latest
+            ghcr.io/${{ github.repository_owner }}/mailpile:${{ env.MAILPILE_VERSION }}
           platforms: ${{ env.PLATFORMS }}
           push: ${{ env.PUSH_IMAGE }}
-          target: ${{ matrix.variant }}
+          target: mailpile
