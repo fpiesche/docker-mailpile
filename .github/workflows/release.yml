@@ -75,7 +75,7 @@ jobs:
 
       - name: Build and push Mailpile Docker image
         if: ${{ env.BUILD_RELEASE == 'true' }}
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           build-args: MAILPILE_VERSION=release
           tags: |
